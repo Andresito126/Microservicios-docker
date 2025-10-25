@@ -36,32 +36,7 @@ Descripción: Almacena los datos de la aplicación. Utiliza un volumen nombrado 
 
 Puerto (Host): 3306
 
-2. Diagrama de Arquitectura y Flujo de Datos
-A continuación se muestra la arquitectura general del sistema.
 
-
-
-graph TD
-    subgraph "Usuario (Navegador)"
-        U[Usuario]
-    end
-
-    subgraph "Instancia AWS (Servidor)"
-        direction LR
-        subgraph "Red Interna: 'andre-net'"
-            A(api-andre <br> Node.js API)
-            DB(db-mysql-andre <br> MySQL)
-        end
-
-        F(frontend-andre <br> React App)
-        V[(db-data <br> Volumen Persistente)]
-
-        F -- Petición API (Puerto 5000) --> A
-        A -- Consulta/Escritura (Puerto 3306) --> DB
-        DB -- Almacena en --> V
-    end
-
-    U -- Accede (Puerto 3000) --> F
 Flujo de Datos
 Usuario -> Frontend: El usuario abre su navegador y accede a http://34.203.38.177:3000. El servidor le entrega la aplicación de React.
 
@@ -75,7 +50,7 @@ Backend -> Frontend: La API formatea los datos como JSON y los devuelve al naveg
 
 Frontend -> Usuario: React actualiza la página y muestra la lista de estudiantes.
 
-3. Cómo Levantar el Entorno
+2. Cómo Levantar el Entorno
 Sigue estos pasos para desplegar la aplicación en un servidor (ej. una instancia EC2 de AWS).
 
 Prerrequisitos
@@ -93,20 +68,12 @@ Bash
 git clone https://github.com/Andresito126/Microservicios-docker
 cd Microservicios-docker/
 
-
-
-
-
-
-
 Construir y Levantar los Servicios: Desde la carpeta raíz del proyecto (donde está el docker-compose.yml), ejecuta:
-
-
 
 sudo docker compose up --build
 --build fuerza a Docker a reconstruir tus imágenes personalizadas  con los últimos cambios.
 
-4. Verificación y Pruebas
+3. Verificación y Pruebas
 Una vez que el comando anterior termine y los logs se estabilicen, puedes probar la aplicación:
 
 Probar el Frontend:
