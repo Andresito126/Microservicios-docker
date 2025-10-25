@@ -1,0 +1,64 @@
+version: "3.8"
+
+services:
+  # servicio de la bd 
+  db-mysql-andre: # nombre del servicio 
+    image: mysql:8.0
+    container_name: db-mysql-andre # Nombre del contenedor
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password_123
+      MYSQL_USER: andre_user
+      MYSQL_PASSWORD: andre_password
+      MYSQL_DATABASE: andre_student_db # BD con tu nombre
+    volumes:
+      - db-data:/var/lib/mysql # vol nombrado
+      - ./db_init:/docker-entrypoint-initdb.d # scritp de inicialización
+    networks:
+      - andre-net
+
+  # servicio de backedn 
+  api-andre:
+    image: andre/api-estudiantes # nombre de imagen personalizada
+    build:
+      context: ./backend # le dice donde esta el dckerfile
+      dockerfile: Dockerfile
+    container_name: api-andre
+    ports:
+      - "5000:5000"
+    environment:
+      # conecta a la bd usando el nombre del servicio
+      DB_HOST: db-mysql-andre
+      DB_USER: andre_user
+      DB_PASSWORD: andre_password
+      DB_NAME: andre_student_db
+      PORT: 5000
+    networks:
+      - andre-net
+    depends_on: # Arranca después de la BD 
+      - db-mysql-andre
+
+  # servicio de front 
+  frontend-andre:
+    image: andre/frontend-estudiantes # nombre de imagen personalizada
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: frontend-andre
+    ports:
+      - "3000:3000"
+    networks:
+      - andre-net
+    depends_on:
+      - api-andre
+
+# sed interna 
+networks:
+  andre-net:
+    driver: bridge
+
+# solumen persistente 
+volumes:
+  db-data:
+    driver: local
